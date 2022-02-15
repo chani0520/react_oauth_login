@@ -15,20 +15,12 @@ router.post(
 
     const token = User.generateToken();
 
-    // console.log("🎃 kakaocallback.js req.user ==>", user);
-    // console.log("🎃 kakaocallback.js 카카오가 준 accessToken ==>", accessToken);
-    // console.log(
-    //   "🎃 kakaocallback.js 카카오가 준 refreshToken ==>",
-    //   refreshToken
-    // );
-    // console.log("🎃 kakaocallback.js pickpick용 token ==>", token);
-
     res.cookie("access_token", token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
-
     res.cookie("kakao_access_token", accessToken);
+    res.cookie("kakao_refresh_token", refreshToken);
 
     return res.status(200).json({
       isUser: true,
@@ -37,8 +29,6 @@ router.post(
       message: "로그인 성공!",
       userId: user._id,
       userNickname: user.nickname,
-      accessToken: token,
-      kakao_access_token: accessToken,
     });
   }
 );

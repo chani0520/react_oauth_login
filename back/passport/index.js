@@ -12,7 +12,12 @@ module.exports = () => {
     console.log("🟨 시리얼라이즈 유저 :", user);
     // console.log("email :", user.user.email);
     // console.log("accessToken :", user.accessToken);
-    done(null, { email: user.user.email, accessToken: user.accessToken });
+    // console.log("refreshToken :", user.refreshToken);
+    done(null, {
+      email: user.user.email,
+      accessToken: user.accessToken,
+      refreshToken: user.refreshToken,
+    });
   });
 
   /**
@@ -29,7 +34,11 @@ module.exports = () => {
       .then((result) => {
         console.log("🟨 디시리얼라이즈에서 찍히는 유저 :", user);
 
-        const tokenUser = { user: result, accessToken: user.accessToken };
+        const tokenUser = {
+          user: result,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+        };
         console.log("🟨 디시리얼라이즈 tokenUser :", tokenUser);
         done(null, tokenUser);
       })

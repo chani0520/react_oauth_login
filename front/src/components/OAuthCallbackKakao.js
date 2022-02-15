@@ -1,12 +1,17 @@
 import React from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import qs from "qs";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const OAuthCallbackKakao = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  let code = new URL(window.location.href).searchParams.get("code");
-  const url = `http://localhost:4000/api/oauth/callback/kakao?code=${code}`;
+  console.log(location);
+  const query = qs.parse(location.search, {
+    ignoreQueryPrefix: true,
+  });
+  const url = `http://localhost:4000/api/oauth/callback/kakao?code=${query.code}`;
 
   axios({
     url: url,
@@ -14,17 +19,17 @@ const OAuthCallbackKakao = () => {
     withCredentials: true,
   })
     .then((res) => {
-      console.log("🔸 [client] res.data (OAuthCallbackKakao.js) =>", res.data);
-
+      // console.log("🔸 [client] res.data (OAuthCallbackKakao.js) =>", res.data);
       localStorage.setItem("nickname", res.data.userNickname);
 
       navigate("/");
     })
     .catch((err) => {
-      console.log("===> ", err);
+      console.log(err);
     });
 
   return (
+    // 이부분은 react-spinner를 활용해 로딩화면으로 구현!
     <div style={{ textAlign: "center" }}>
       <div>
         <b>🍟 OAuth Kakao Callback page 🍟</b>
@@ -35,7 +40,7 @@ const OAuthCallbackKakao = () => {
       </p>
       <hr />
       <div>
-        🍟 <b>인가코드</b> : {code} 🍟
+        🍟 <b>인가코드</b> : {query.code} 🍟
       </div>
       <hr />
     </div>
