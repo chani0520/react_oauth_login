@@ -13,6 +13,7 @@ front/node_modules
 /build
 
 # misc
+front/.env
 back/.env
 .DS_Store
 .env.local

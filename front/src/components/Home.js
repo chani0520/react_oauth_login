@@ -1,63 +1,73 @@
 import React, { useEffect, useState } from "react";
-import Login from "./Login";
+import KakaoBtn from "./KakaoBtn";
 import axios from "axios";
+import GoogleBtn from "./GoogleBtn";
 
 const Home = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [nickname, setNickname] = useState("");
-  const [kakaoAccessToken, setKakaoAccessToken] = useState("");
-  const [kakaoRefreshToken, setKakaoRefreshToken] = useState("");
+
+  const [googleNickname, setGoogleNickname] = useState("");
+  const [googleEmail, setGoogleEmail] = useState("");
 
   useEffect(() => {
-    const kakao_access_token = getCookie("kakao_access_token");
-    const kakao_refresh_token = getCookie("kakao_refresh_token");
-
     if (localStorage.getItem("nickname") !== null) {
       setNickname(localStorage.getItem("nickname"));
 
       setIsLogin(true);
-
-      setKakaoAccessToken(kakao_access_token);
-      setKakaoRefreshToken(kakao_refresh_token);
     }
   }, []);
 
-  const getCookie = (name) => {
-    let value = document.cookie.match("(^|;) ?" + name + "=([^;]*)(;|$)");
-    return value ? value[2] : null;
-  };
-
   const clickLogout = () => {
-    axios({
-      method: "get",
-      url: "http://localhost:4000/api/kakao/logout",
-      withCredentials: true,
-    }).then((res) => {
-      localStorage.removeItem("nickname");
+    let provider = localStorage.getItem("provider");
+    if (provider === "kakao") {
+      axios({
+        method: "get",
+        url: "http://localhost:4000/api/kakao/logout",
+        withCredentials: true,
+      }).then((res) => {
+        localStorage.removeItem("nickname");
 
-      setNickname("");
+        setNickname("");
 
-      setIsLogin(false);
-
-      setKakaoAccessToken("");
-      setKakaoRefreshToken("");
-    });
+        setIsLogin(false);
+      });
+    }
   };
 
   return (
     <>
-      <div style={{ fontSize: "2em" }}>🔸🔸 KakaoLogin Test 🔸🔸</div>
-      <div>🔸 nickname : {nickname}</div>
-      <div>🔸 access_token from kakao : {kakaoAccessToken}</div>
-      <div>🔸 refresh_token from kakao : {kakaoRefreshToken}</div>
-      <hr />
-      {isLogin ? (
+      {/* 🎃🎃 KAKAO LOGIN 🎃🎃 */}
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontSize: "2em" }}>🔸🔸 Kakao Login 🔸🔸</div>
+        {isLogin ? (
+          <div>
+            <button onClick={clickLogout}>카카오 로그아웃</button>
+          </div>
+        ) : (
+          <KakaoBtn />
+        )}
         <div>
-          <button onClick={clickLogout}>카카오 로그아웃</button>
+          <b>🔸 nickname</b> : {nickname}
         </div>
-      ) : (
-        <Login />
-      )}
+        <div>
+          <b>🔸 email</b> : {localStorage.getItem("email")}
+        </div>
+      </div>
+
+      <hr style={{ margin: "30px" }} />
+
+      {/* 🎃🎃 GOOGLE LOGIN 🎃🎃 */}
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontSize: "2em" }}>🔹🔹 Google Login 🔹🔹</div>
+        <GoogleBtn />
+        <div>
+          <b>🔹 nickname</b> : {nickname}
+        </div>
+        <div>
+          <b>🔹 email</b> : {localStorage.getItem("email")}
+        </div>
+      </div>
     </>
   );
 };
